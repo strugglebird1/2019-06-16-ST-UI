@@ -1,0 +1,30 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: fb-admin-ui
+  namespace: fbplatform-test
+spec:
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        field.cattle.io/ports: '[[{"containerPort":80,"dnsName":"fb-admin-ui","hostPort":80,"kind":"ClusterIP","name":"http","protocol":"TCP","sourcePort":0}]]'
+      labels:
+        app: fb-admin-ui
+    spec:
+      imagePullSecrets:
+      - name: facebank
+      containers:
+      - name: fb-admin-ui
+        image: registry.sensetime.com/facebank/fb-admin-ui:latest
+        ports:
+        - name: http
+          containerPort: 80
+          targetPort: 80
+          protocol: TCP
+        imagePullPolicy: Always
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: test
+      nodeSelector:
+        usage: "service"
